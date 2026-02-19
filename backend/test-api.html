@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Task API Tester</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    input, textarea { display: block; margin: 5px 0; width: 300px; }
+    button { margin: 5px 5px 5px 0; padding: 6px 12px; }
+    #output { margin-top: 20px; white-space: pre-wrap; background: #f4f4f4; padding: 10px; }
+  </style>
+</head>
+<body>
+
+<h2>Task API Tester</h2>
+
+<h3>Create Task</h3>
+<input id="title" placeholder="Title (required)" />
+<textarea id="description" placeholder="Description"></textarea>
+<button onclick="createTask()">Create</button>
+
+<h3>All Tasks</h3>
+<button onclick="getTasks()">Fetch Tasks</button>
+
+<h3>Update Task</h3>
+<input id="updateId" placeholder="Task ID" />
+<input id="status" placeholder="Status (pending/completed)" />
+<button onclick="updateTask()">Update</button>
+
+<h3>Delete Task</h3>
+<input id="deleteId" placeholder="Task ID" />
+<button onclick="deleteTask()">Delete</button>
+
+<div id="output"></div>
+
+<script>
+const API = "http://127.0.0.1:5000/tasks";
+
+function show(data) {
+  document.getElementById("output").innerText = JSON.stringify(data, null, 2);
+}
+
+async function createTask() {
+  const title = document.getElementById("title").value;
+  const description = document.getElementById("description").value;
+
+  const res = await fetch(API, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ title, description })
+  });
+
+  const data = await res.json();
+  show(data);
+}
+
+async function getTasks() {
+  const res = await fetch(API);
+  const data = await res.json();
+  show(data);
+}
+
+async function updateTask() {
+  const id = document.getElementById("updateId").value;
+  const status = document.getElementById("status").value;
+
+  const res = await fetch(API + "/" + id, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ status })
+  });
+
+  const data = await res.json();
+  show(data);
+}
+
+async function deleteTask() {
+  const id = document.getElementById("deleteId").value;
+
+  const res = await fetch(API + "/" + id, {
+    method: "DELETE"
+  });
+
+  const data = await res.json();
+  show(data);
+}
+</script>
+
+</body>
+</html>
